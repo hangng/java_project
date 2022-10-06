@@ -17,9 +17,15 @@
     <string name="fragments">Fragments</string>
     <string name="tab_one">Tab One</string>
     <string name="tab_two">Tab Two</string>
+    <string name="camera">Camera</string>
+    <string name="document">Document</string>
+    <string name="view_image">View Image</string>
+    <string name="permission">Permission</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
     <!--<string name="facebook_app_id">463815637685013</string>-->
     <!--<string name="fb_login_protocol_scheme">fb463815637685013</string>-->
 
-
+    <string name="permission_denied">Permission denied. Please proceed to Settings in order to change the permission.</string>
 
 </resources>

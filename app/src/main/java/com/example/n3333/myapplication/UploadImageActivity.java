@@ -2,18 +2,20 @@ package com.example.n3333.myapplication;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,19 +23,23 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+
+import com.example.n3333.myapplication.component.GlobalTools;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class UploadImage extends Activity {
-
+public class UploadImageActivity extends Activity implements View.OnClickListener {
+    public static final int PERMISSIONS_REQUEST_CAMERA = 9002;
+    public static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 9003;
+    public static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 9004;
+    public static final int PERMISSIONS_REQUEST_AUDIO = 9005;
+    public static final int PERMISSIONS_REQUEST_CALL_PHONE = 9006;
     private static final int SELECTED_PIC = 100;
-    final int RequestPermissionCode=1;
+    final int RequestPermissionCode = 1;
     ImageView imageView, img2;
     LinearLayout mLayout;
     private Intent CamIntent, GalIntent, CropIntent;
@@ -45,11 +51,16 @@ public class UploadImage extends Activity {
     private Uri mImageFileUri;
     private String msImageFilePath = "";
     public static final int MEDIA_TYPE_IMAGE = 1, MEDIA_TYPE_VIDEO = 2;
+    public static final String[] UPLOAD_TYPE = {"application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "image/jpeg", "image/png", "image/bmp"};
+    private Toast mToastPermission;
+
+    private String msImage1 = "";
+    private String msOriImage1 = "";
+    private String msNewImage1 = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         setContentView(R.layout.activity_upload_image);
         mLayout = findViewById(R.id.up_img);
@@ -59,40 +70,10 @@ public class UploadImage extends Activity {
         btnGal = findViewById(R.id.btn_gallery);
 
 
-        btnCam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takePhoto();
-            }
-        });
+        btnCam.setOnClickListener(this);
+        btnGal.setOnClickListener(this);
 
-        btnGal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GalleryOpen();
-            }
-        });
     }
-
-    public void btnClick(View v) {
-
-        int permissionCheck = ContextCompat.checkSelfPermission(UploadImage.this, Manifest.permission.CAMERA);
-        if (permissionCheck == PackageManager.PERMISSION_DENIED) {
-            RequestRuntimePermission();
-        }
-
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, SELECTED_PIC);
-    }
-
-    private void RequestRuntimePermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(UploadImage.this, Manifest.permission.CAMERA)) {
-            Toast.makeText(this, "Allow Access Camera Permission", Toast.LENGTH_SHORT).show();
-        } else {
-            ActivityCompat.requestPermissions(UploadImage.this, new String[]{Manifest.permission.CAMERA}, RequestPermissionCode);
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,27 +82,6 @@ public class UploadImage extends Activity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.btn_camera) {
-//            CameraOpen();
-            takePhoto();
-        } else if (item.getItemId() == R.id.btn_gallery) {
-            GalleryOpen();
-
-        }
-        return true;
-    }
-
-    private void CameraOpen() {
-        CamIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        file = new File(Environment.getExternalStorageDirectory(),
-                "file"+String.valueOf(System.currentTimeMillis())+".jpg");
-        uri = Uri.fromFile(file);
-        CamIntent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
-        CamIntent.putExtra("return-data",true);
-        startActivityForResult(CamIntent,0);
-    }
 
     private void takePhoto() {
         String sImageName = "image_" + System.currentTimeMillis() + ".jpg";
@@ -148,7 +108,7 @@ public class UploadImage extends Activity {
 
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.i("TAG","failed to create directory");
+                Log.i("TAG", "failed to create directory");
                 return null;
             }
         }
@@ -176,7 +136,7 @@ public class UploadImage extends Activity {
             return null;
         }
 
-        Log.i("TAG","mediaFile.getPath() = " + mediaFile.getPath());
+        Log.i("TAG", "mediaFile.getPath() = " + mediaFile.getPath());
 
         return mediaFile;
     }
@@ -202,23 +162,16 @@ public class UploadImage extends Activity {
 
         return new Object[]{fileUri, image.getAbsolutePath()};
     }
-
-    private void GalleryOpen() {
-        GalIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(Intent.createChooser(GalIntent, "Select Picture from Gallery"), 2);
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == 0) {
             CropImage();
-        }else if (requestCode == 2){
-            if(data != null){
+        } else if (requestCode == 2) {
+            if (data != null) {
                 uri = data.getData();
                 CropImage();
-            }else if(requestCode ==1){
-                if (data != null){
+            } else if (requestCode == 1) {
+                if (data != null) {
                     Bundle bundle = data.getExtras();
                     Bitmap bitmap = bundle.getParcelable("data");
                     imageView.setImageBitmap(bitmap);
@@ -228,69 +181,107 @@ public class UploadImage extends Activity {
     }
 
     private void CropImage() {
-        try{
+        try {
             CropIntent = new Intent("com.android.camera.action.CROP");
-            CropIntent.setDataAndType(uri,"image/*");
+            CropIntent.setDataAndType(uri, "image/*");
 
-            CropIntent.putExtra("crop","true");
-            CropIntent.putExtra("outputX",180);
-            CropIntent.putExtra("outputY",180);
-            CropIntent.putExtra("aspectX",3);
-            CropIntent.putExtra("aspectY",4);
-            CropIntent.putExtra("scaleUpIfNeeded",true);
-            CropIntent.putExtra("return-data",true);
+            CropIntent.putExtra("crop", "true");
+            CropIntent.putExtra("outputX", 180);
+            CropIntent.putExtra("outputY", 180);
+            CropIntent.putExtra("aspectX", 3);
+            CropIntent.putExtra("aspectY", 4);
+            CropIntent.putExtra("scaleUpIfNeeded", true);
+            CropIntent.putExtra("return-data", true);
 
-            startActivityForResult(CropIntent,1);
-        }
-        catch (ActivityNotFoundException ex)
-        {
+            startActivityForResult(CropIntent, 1);
+        } catch (ActivityNotFoundException ex) {
 
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode)
-        {
-            case RequestPermissionCode:
-            {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(this,"Permission Canceled",Toast.LENGTH_SHORT).show();
+        if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                } else {
+//                    showUploadDialog();
+                }
+            } else {
+                if (mToastPermission == null)
+                    mToastPermission = Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_LONG);
+
+                mToastPermission.show();
             }
-            break;
-        }
+        } else if (requestCode == PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                showUploadDialog();
+            } else {
+                if (mToastPermission == null)
+                    mToastPermission = Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_LONG);
+
+                mToastPermission.show();
+            }
+        } else
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    /*
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            if (resultCode == RESULT_OK && requestCode == SELECTED_PIC && null != data) {
-
-                Uri uri = data.getData();
-                String[] projection = {MediaStore.Images.Media.DATA};
-
-                Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(projection[0]);
-                String filepath = cursor.getString(columnIndex);
-                cursor.close();
-
-                imageView = findViewById(R.id.profile_image);
-                //imageView.setImageURI(uri);
-                imageView.setImageBitmap(BitmapFactory.decodeFile(filepath));
-                Toast.makeText(this, "Image Displayed", Toast.LENGTH_SHORT).show();
+    public void onClick(View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            } else {
+                showUploadDialog();
             }
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
         }
     }
-*/
+
+    private void showUploadDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        String[] photosource;
+        boolean bShowViewImage = false;
+
+        bShowViewImage = (msImage1 != null && !msImage1.isEmpty());
+
+        if (bShowViewImage) {
+            photosource = new String[]{getString(R.string.camera), getString(R.string.document), getString(R.string.view_image)};
+        } else {
+            photosource = new String[]{getString(R.string.camera), getString(R.string.document)};
+        }
+
+        builder.setItems(photosource, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        takePhoto();  //Check Permission
+                        break;
+                    case 1:
+                        Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        pickIntent.setType("*/*");
+                        pickIntent.putExtra(Intent.EXTRA_MIME_TYPES, GlobalTools.UPLOAD_TYPE);
+                        startActivityForResult(pickIntent, PICK_GALLERY_REQUEST);
+                        break;
+                    case 2:
+                        String sImage = msImage1;
+
+                        if (sImage != null && !sImage.isEmpty()) {
+                            GlobalTools.showImageDialog(UploadImageActivity.this, UploadImageActivity.this, "", GlobalTools.StringToBitMap(sImage));
+                        }
+                        break;
+                }
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
 }
+
+

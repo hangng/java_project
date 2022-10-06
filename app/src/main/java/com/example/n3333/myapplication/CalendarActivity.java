@@ -59,7 +59,7 @@ public class CalendarActivity extends AppCompatActivity implements DatePickerDia
             @Override
             public void onClick(View v) {
                 showDatePicker();
-//                DialogFragment datePicker = new FragmentTwo();
+//                DialogFragment datePicker = new GalleryFr();
 //                datePicker.show(getSupportFragmentManager(), "date picker");
 
 

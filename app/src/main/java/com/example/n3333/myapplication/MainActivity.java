@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent at = new Intent(MainActivity.this, AsyncTaskActivity.class);
             startActivity(at);
         } else if (btnUploadImag == v) {
-            Intent ui = new Intent(MainActivity.this, UploadImage.class);
+            Intent ui = new Intent(MainActivity.this, UploadImageActivity.class);
             startActivity(ui);
         } else if (btnExpand == v) {
             Intent exp = new Intent(MainActivity.this, ExpendableActivity.class);

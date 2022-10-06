@@ -11,14 +11,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.n3333.myapplication.R;
 
-public class FragmentTwo extends Fragment {
+public class GalleryFr extends Fragment {
 
     private TextView mTvTitle;
 
-    public static FragmentTwo newInstance() {
+    public static GalleryFr newInstance() {
 
         Bundle args = new Bundle();
-        FragmentTwo fragment = new FragmentTwo();
+        GalleryFr fragment = new GalleryFr();
         fragment.setArguments(args);
         return fragment;
     }

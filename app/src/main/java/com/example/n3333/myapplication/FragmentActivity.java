@@ -12,8 +12,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 
-import fragments.FragmentOne;
-import fragments.FragmentTwo;
+import fragments.CameraFr;
+import fragments.GalleryFr;
 
 public class FragmentActivity extends AppCompatActivity {
     private TabLayout mTlTab;
@@ -31,7 +31,7 @@ public class FragmentActivity extends AppCompatActivity {
     private void initCom() {
         mTlTab = (TabLayout) findViewById(R.id.tab);
 
-        replaceFragment(R.string.tab_one, FragmentOne.newInstance());
+        replaceFragment(R.string.tab_one, CameraFr.newInstance());
 
         // Create a new Tab named "First"
         TabLayout.Tab firstTab = mTlTab.newTab();
@@ -68,13 +68,13 @@ public class FragmentActivity extends AppCompatActivity {
                 case 0:
 
                     popFragment(R.string.tab_two);
-                    replaceFragment(R.string.tab_one, FragmentOne.newInstance());
+                    replaceFragment(R.string.tab_one, CameraFr.newInstance());
 //                    mTvTitle.setText(R.string.tab_one);
                     break;
 
                 case 1:
                     popFragment(R.string.tab_one);
-                    replaceFragment(R.string.tab_two, FragmentTwo.newInstance());
+                    replaceFragment(R.string.tab_two, GalleryFr.newInstance());
 //                    mTvTitle.setText(R.string.tab_two);
                     break;
             }
