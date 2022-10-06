@@ -1,4 +1,4 @@
-package com.example.n3333.myapplication;
+package fragments;
 
 import android.animation.ValueAnimator;
 import android.os.Bundle;
@@ -9,9 +9,19 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-public class FragmentOne extends Fragment {
+import com.example.n3333.myapplication.R;
+
+public class FragmentTwo extends Fragment {
 
     private TextView mTvTitle;
+
+    public static FragmentTwo newInstance() {
+
+        Bundle args = new Bundle();
+        FragmentTwo fragment = new FragmentTwo();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,19 +31,19 @@ public class FragmentOne extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag1, container, false);
+        View view = inflater.inflate(R.layout.frag2, container, false);
         mTvTitle = view.findViewById(R.id.lblListHeader);
         move(mTvTitle);
         return view;
     }
 
-    public static void move(final TextView view){
+    public static void move(final TextView view) {
         ValueAnimator va = ValueAnimator.ofFloat(0f, 100f);
         int mDuration = 3000; //in millis
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                view.setTranslationX((float)animation.getAnimatedValue());
+                view.setTranslationX((float) animation.getAnimatedValue());
             }
         });
         va.setRepeatCount(5);

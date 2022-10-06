@@ -3,6 +3,7 @@ package com.example.n3333.myapplication;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +23,12 @@ import android.widget.Toolbar;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class UploadImage extends Activity {
 
@@ -35,6 +41,10 @@ public class UploadImage extends Activity {
     private Uri uri;
     Toolbar toolbar;
     private Button btnCam, btnCrop, btnGal;
+    public static final int CAMERA_IMAGE_REQUEST = 1, PICK_GALLERY_REQUEST = 2, RECORD_VIDEO_REQUEST = 3;
+    private Uri mImageFileUri;
+    private String msImageFilePath = "";
+    public static final int MEDIA_TYPE_IMAGE = 1, MEDIA_TYPE_VIDEO = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +62,7 @@ public class UploadImage extends Activity {
         btnCam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraOpen();
+                takePhoto();
             }
         });
 
@@ -94,7 +104,8 @@ public class UploadImage extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.btn_camera) {
-            CameraOpen();
+//            CameraOpen();
+            takePhoto();
         } else if (item.getItemId() == R.id.btn_gallery) {
             GalleryOpen();
 
@@ -110,6 +121,86 @@ public class UploadImage extends Activity {
         CamIntent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
         CamIntent.putExtra("return-data",true);
         startActivityForResult(CamIntent,0);
+    }
+
+    private void takePhoto() {
+        String sImageName = "image_" + System.currentTimeMillis() + ".jpg";
+
+        Object[] objects = captureImage(sImageName, getOutputMediaFile(this, MEDIA_TYPE_IMAGE, sImageName), false);
+        if (objects != null) {
+            if (objects.length > 1) {
+                mImageFileUri = (Uri) objects[0];
+                msImageFilePath = (String) objects[1];
+            } else if (objects.length > 0) {
+                mImageFileUri = (Uri) objects[0];
+                msImageFilePath = mImageFileUri.getPath();
+            }
+        }
+    }
+
+    public static File getOutputMediaFile(Context context, int type, String... sFileName) {
+        if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
+            return null;
+        }
+
+//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MYTHEO");
+        File mediaStorageDir = context.getCacheDir();
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.i("TAG","failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            String sName;
+            if (sFileName.length > 0 && sFileName[0] != null && !sFileName[0].isEmpty()) {
+                sName = sFileName[0];
+            } else {
+                sName = "IMG_" + timeStamp + ".jpg";
+            }
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + sName);
+        } else if (type == MEDIA_TYPE_VIDEO) {
+            String sName;
+            if (sFileName.length > 0 && sFileName[0] != null && !sFileName[0].isEmpty()) {
+                sName = sFileName[0];
+            } else {
+                sName = "VID_" + timeStamp + ".mp4";
+            }
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + sName);
+        } else {
+            return null;
+        }
+
+        Log.i("TAG","mediaFile.getPath() = " + mediaFile.getPath());
+
+        return mediaFile;
+    }
+
+
+    public Object[] captureImage(String sImageName, File image, boolean bFrontCamera) {
+        // Creating folders for Image
+//        String sImageFolderPath = ISubject.getInstance(mContext).getImageFilePath();
+//        File imagesFolder = new File(sImageFolderPath);
+//        imagesFolder.mkdirs();
+//
+//        // Creating image here
+//        File image = new File(sImageFolderPath, sImageName);
+
+        Uri fileUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", image);
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (bFrontCamera) {
+            takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", 1);
+        }
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        startActivityForResult(takePictureIntent, CAMERA_IMAGE_REQUEST);
+
+        return new Object[]{fileUri, image.getAbsolutePath()};
     }
 
     private void GalleryOpen() {

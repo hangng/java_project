@@ -91,7 +91,7 @@
         <!-- </provider> -->
         <activity android:name=".MoviesApp" />
         <activity android:name=".UploadImage" />
-        <activity android:name=".FragmentMain" />
+        <activity android:name=".FragmentActivity" />
         <activity android:name=".ExpendableActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

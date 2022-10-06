@@ -14,8 +14,12 @@
     <string name="facebook_app_id">355732528433221</string>
     <string name="fb_login_protocol_scheme">fb355732528433221</string>
     <string name="testing_ground">Testing Ground</string>
+    <string name="fragments">Fragments</string>
+    <string name="tab_one">Tab One</string>
+    <string name="tab_two">Tab Two</string>
     <!--<string name="facebook_app_id">463815637685013</string>-->
     <!--<string name="fb_login_protocol_scheme">fb463815637685013</string>-->
+
 
 
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -21,7 +22,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             btnFb, btnDb, btnNotify, btnSortingRv, btnFirebase, btnSurfaceView, btnBookLoading, btnDetectInstalledApp,
             btnClientList;
     Context context;
-
+    private static long mlLastClickTime;
+    private static int miLastClickViewId;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        if (isFastDoubleClick()) {
+            return;
+        }
 
         if (btnRecyclerV == v) {
             Intent recycler = new Intent(MainActivity.this, MoviesApp.class);
@@ -153,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent exp = new Intent(MainActivity.this, ExpendableActivity.class);
             startActivity(exp);
         } else if (btnFragment == v) {
-            Intent fm = new Intent(MainActivity.this, FragmentMain.class);
+            Intent fm = new Intent(MainActivity.this, FragmentActivity.class);
             startActivity(fm);
         } else if (btnDialog == v) {
             Intent dl = new Intent(MainActivity.this, DialogActivity.class);
@@ -227,6 +232,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return found;
+    }
+
+    public static boolean isFastDoubleClick() {
+        long time = System.currentTimeMillis();
+
+        Log.i("AcBase", "Math.abs(time - mlLastClickTime) = " + Math.abs(time - mlLastClickTime));
+        if (Math.abs(time - mlLastClickTime) < 500) {
+            return true;
+        }
+        mlLastClickTime = time;
+        return false;
+    }
+
+    public static boolean isFastDoubleClick(View view) {
+        long time = System.currentTimeMillis();
+
+        if (view.getId() == miLastClickViewId && Math.abs(time - mlLastClickTime) < 500) {
+            return true;
+        }
+        mlLastClickTime = time;
+        miLastClickViewId = view.getId();
+        return false;
     }
 
 }
