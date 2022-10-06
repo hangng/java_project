@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.n3333.myapplication">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".DetectInstalledApp" />
+        <activity android:name=".SurfaceViewActivity" />
+        <activity android:name=".FirebaseTextML" />
+
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="label" /> <!-- To use multiple models: android:value="label,model2,model3" -->
+        <activity android:name=".SortingRecyclerview" />
+        <activity android:name=".NotificationTest" />
+
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider355732528433221"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
+        <activity android:name=".DataBindingActivity" /> <!-- fb step 5 -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" /> <!-- fb codeless step 2 -->
+        <activity
+            android:name=".FacebookDevelopment"
+            android:label="Facebook">
+            <tools:validation testUrl="http://testing.com.my/test" />
+        </activity>
+        <activity android:name=".LoadMoreDataToRVL" />
+        <activity android:name=".TouchEvent" />
+        <activity android:name=".CanvasActivity" />
+        <activity android:name=".BottomNavigation">
+            <tools:validation testUrl="http://rv.com.my/test" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="rv.com.my"
+                    android:pathPrefix="/test"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Main3Activity" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category." />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- <provider -->
+        <!-- android:name="android.support.v4.content.FileProvider" -->
+        <!-- android:authorities="com.example.myapplication" -->
+        <!-- android:grantUriPermissions="true"> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.support.FILE_PROVIDER_PATHS" -->
+        <!-- android:resource="@xml/filepaths" /> -->
+        <!-- </provider> -->
+        <activity android:name=".MoviesApp" />
+        <activity android:name=".UploadImage" />
+        <activity android:name=".FragmentMain" />
+        <activity android:name=".ExpendableActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="testing.com.my"
+                    android:pathPattern="/test"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ProfilePractice" />
+        <activity android:name=".BookLoadingTutorial" />
+        <activity android:name=".AsyncTaskActivity" />
+        <activity android:name=".Dialogs.DialogActivity" />
+        <activity android:name=".TimeTutorial.TimeActivity" />
+        <activity android:name=".CalendarActivity" />
+        <activity android:name=".FragmentRecyclerView" />
+        <activity android:name=".SwipeRecyclerView" />
+        <activity android:name=".TapTarget.TapTargetActivity" />
+        <activity
+            android:name=".FloatingActivity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme.NoActionBar" />
+    </application>
+
+</manifest>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    //TODO must use same file path name
+    <external-files-path
+        name="my_images"
+        path="Android/data/com.example.n3333.myapplication/files/pictures"/>
+</paths>
