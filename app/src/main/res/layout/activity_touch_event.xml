@@ -10,6 +10,7 @@
     <TextView android:text="Multitouch example" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textview"
+        android:visibility="gone"
         android:textSize="35dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -18,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tutorials point"
+        android:visibility="gone"
         android:id="@+id/tv_show_text"
         android:layout_below="@+id/textview"
         android:layout_centerHorizontal="true"
@@ -35,7 +37,7 @@
         android:theme="@style/Base.TextAppearance.AppCompat" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
         android:layout_below="@+id/imageView"
@@ -47,7 +49,7 @@
         android:textColorHint="#ff69ff0e" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText2"
         android:layout_below="@+id/editText"
@@ -59,7 +61,7 @@
         android:layout_alignEnd="@+id/editText" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText3"
         android:layout_below="@+id/editText2"
@@ -71,7 +73,7 @@
         android:layout_alignEnd="@+id/editText2" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText4"
         android:layout_below="@+id/editText3"
@@ -83,9 +85,10 @@
         android:layout_alignEnd="@+id/editText3" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Touch here"
+        android:visibility="gone"
         android:id="@+id/textView2"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/imageView"

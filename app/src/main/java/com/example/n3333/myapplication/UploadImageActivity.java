@@ -1,5 +1,7 @@
 package com.example.n3333.myapplication;
 
+import static com.example.n3333.myapplication.component.GlobalTools.getRotationAngle;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,6 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.hardware.Camera;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,9 +32,14 @@ import androidx.core.content.FileProvider;
 import com.example.n3333.myapplication.component.GlobalTools;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class UploadImageActivity extends Activity implements View.OnClickListener {
     public static final int PERMISSIONS_REQUEST_CAMERA = 9002;
@@ -46,7 +55,7 @@ public class UploadImageActivity extends Activity implements View.OnClickListene
     private File file;
     private Uri uri;
     Toolbar toolbar;
-    private Button btnCam, btnCrop, btnGal;
+    private Button btnCam, btnViewImage, btnGal;
     public static final int CAMERA_IMAGE_REQUEST = 1, PICK_GALLERY_REQUEST = 2, RECORD_VIDEO_REQUEST = 3;
     private Uri mImageFileUri;
     private String msImageFilePath = "";
@@ -66,10 +75,10 @@ public class UploadImageActivity extends Activity implements View.OnClickListene
         mLayout = findViewById(R.id.up_img);
         imageView = findViewById(R.id.profile_image);
         btnCam = findViewById(R.id.btn_camera);
-        btnCrop = findViewById(R.id.btn_crop);
+        btnViewImage = findViewById(R.id.btn_view_img);
         btnGal = findViewById(R.id.btn_gallery);
 
-
+        btnViewImage.setOnClickListener(this);
         btnCam.setOnClickListener(this);
         btnGal.setOnClickListener(this);
 
@@ -102,8 +111,6 @@ public class UploadImageActivity extends Activity implements View.OnClickListene
         if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
             return null;
         }
-
-//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MYTHEO");
         File mediaStorageDir = context.getCacheDir();
 
         if (!mediaStorageDir.exists()) {
@@ -143,14 +150,6 @@ public class UploadImageActivity extends Activity implements View.OnClickListene
 
 
     public Object[] captureImage(String sImageName, File image, boolean bFrontCamera) {
-        // Creating folders for Image
-//        String sImageFolderPath = ISubject.getInstance(mContext).getImageFilePath();
-//        File imagesFolder = new File(sImageFolderPath);
-//        imagesFolder.mkdirs();
-//
-//        // Creating image here
-//        File image = new File(sImageFolderPath, sImageName);
-
         Uri fileUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", image);
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -162,22 +161,109 @@ public class UploadImageActivity extends Activity implements View.OnClickListene
 
         return new Object[]{fileUri, image.getAbsolutePath()};
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == 0) {
-            CropImage();
-        } else if (requestCode == 2) {
-            if (data != null) {
-                uri = data.getData();
-                CropImage();
-            } else if (requestCode == 1) {
-                if (data != null) {
-                    Bundle bundle = data.getExtras();
-                    Bitmap bitmap = bundle.getParcelable("data");
-                    imageView.setImageBitmap(bitmap);
-                }
+        if (requestCode == CAMERA_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            int iRotateDegree = GlobalTools.getExifRotationAngle(this, msImageFilePath);
+            Bitmap bitmap = null;
+
+            try {
+                bitmap = GlobalTools.getBitmapFromPath(this, msImageFilePath, 640, 1280);
+            } catch (OutOfMemoryError e) {
+                Log.e("TAG", "OutOfMemoryError = " + e.toString());
+
+                return;
+            } catch (Exception e) {
+                Log.e("TAG", "Exception", e);
+                return;
             }
-        }
+
+            if (bitmap == null) {
+                Log.i("TAG", "bitmap is null");
+                return;
+            }
+
+            bitmap = GlobalTools.rotate(bitmap, iRotateDegree);
+            String sFileName = "";
+            try {
+                File file = new File(msImageFilePath);
+                sFileName = file.getName();
+                file.delete();
+            } catch (Exception e) {
+                Log.e("TAG","Error", e);
+            }
+
+            imageView.setImageBitmap(bitmap);
+
+            setBitmapImage(bitmap,sFileName);
+        } else if (requestCode == PICK_GALLERY_REQUEST && resultCode == Activity.RESULT_OK) {
+            try {
+                Uri selectedMediaUri = data.getData();
+                String sFilePath;
+                boolean mbDeleteFile = false;
+                String sTempFileName = null;
+
+
+                String sType =
+                        Objects.requireNonNull(this.getContentResolver().getType(selectedMediaUri)).split("/")[1];
+                sTempFileName = "Img_" + System.currentTimeMillis() + "." + sType;
+                final File file = new File(this.getCacheDir(), sTempFileName);
+
+                final InputStream inputStream =
+                        this.getContentResolver().openInputStream(selectedMediaUri);
+                OutputStream output = new FileOutputStream(file);
+                final byte[] buffer = new byte[4 * 1024]; // or other buffer size
+                int read;
+
+                while ((read = inputStream.read(buffer)) != -1) {
+                    output.write(buffer, 0, read);
+                }
+
+                output.flush();
+                sFilePath = file.getPath();
+                mbDeleteFile = true;
+
+                if (GlobalTools.isImageFile(selectedMediaUri, this)) {
+                    int iRotateDegree = GlobalTools.getExifRotationAngle(this, sFilePath);
+                    Bitmap bitmap = null;
+                    try {
+                        Log.i("TAG", "checking sFilePath = " + sFilePath);
+                        bitmap = GlobalTools.getBitmapFromPath(this, sFilePath, 1000, 2000);
+                    } catch (OutOfMemoryError e) {
+                        Log.i("TAG", "OutOfMemoryError e " + e);
+                        return;
+                    } catch (Exception e) {
+                        Log.i("TAG", "Exception e " + e);
+                        return;
+                    }
+
+                    bitmap = GlobalTools.rotate(bitmap, iRotateDegree);
+
+                    GlobalTools.drawWatermark(bitmap, this);
+                    imageView.setImageBitmap(bitmap);
+                    setBitmapImage(bitmap,sTempFileName);
+                    if (mbDeleteFile && sTempFileName != null && sFilePath.contains(sTempFileName)) {
+                        File tempFile = new File(sFilePath);
+                        tempFile.delete();
+                    }
+                } else {
+                    File selectedFile = new File(sFilePath);
+                    String sFileName = GlobalTools.getFileName(selectedMediaUri, this);
+                    setFile(selectedFile, sFileName);
+
+                    if (mbDeleteFile && sTempFileName != null && sFilePath.contains(sTempFileName)) {
+                        File tempFile = new File(sFilePath);
+                        tempFile.delete();
+                    }
+                }
+            } catch (Exception e) {
+                Log.i("TAG", "Exception e " + e);
+            }
+
+
+        } else
+            super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void CropImage() {
@@ -235,7 +321,22 @@ public class UploadImageActivity extends Activity implements View.OnClickListene
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
             } else {
-                showUploadDialog();
+//                showUploadDialog();
+
+                if (view == btnCam) {
+                    takePhoto();
+                } else if (view == btnGal) {
+                    Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    pickIntent.setType("*/*");
+                    pickIntent.putExtra(Intent.EXTRA_MIME_TYPES, GlobalTools.UPLOAD_TYPE);
+                    startActivityForResult(pickIntent, PICK_GALLERY_REQUEST);
+                } else {
+                    String sImage = msImage1;
+
+                    if (sImage != null && !sImage.isEmpty()) {
+                        GlobalTools.showImageDialog(UploadImageActivity.this, UploadImageActivity.this, "", GlobalTools.StringToBitMap(sImage));
+                    }
+                }
             }
         }
     }
@@ -280,6 +381,27 @@ public class UploadImageActivity extends Activity implements View.OnClickListene
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void setFile(File selectedFile, String sFileName) {
+        String sFileString = GlobalTools.fileToString(selectedFile);
+        imageView.setImageResource(R.drawable.img_holder);
+//        msBankStatementPhoto = sFileString;
+//        msFileName = sFileName;
+
+    }
+
+
+    private void setBitmapImage(Bitmap bitmap, String sFileName) {
+        GlobalTools.drawWatermark(bitmap,this);
+        String sBitmapString = GlobalTools.BitMapToString(bitmap);
+//        mIvCamera.getLayoutParams().height = mi250dp;
+//        mIvCamera.getLayoutParams().width = mi310dp;
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.requestLayout();
+        imageView.invalidate();
+        imageView.setImageBitmap(bitmap);
+        msImage1 = sBitmapString;
     }
 
 }

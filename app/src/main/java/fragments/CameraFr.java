@@ -19,7 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+
 import androidx.fragment.app.Fragment;
 
 import com.example.n3333.myapplication.R;
@@ -48,7 +48,7 @@ public class CameraFr extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
+    public void onSaveInstanceState( Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putBoolean(SHARE_PERMISSION, mbPermissionGranted);

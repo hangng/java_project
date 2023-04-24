@@ -14,11 +14,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.n3333.myapplication.component.CanvasDemo;
+
 //import com.example.n3333.myapplication.component.CanvasDemo;
 
 public class CanvasActivity extends AppCompatActivity implements View.OnClickListener {
 
-//    private CanvasDemo canvasDemo;
+    private CanvasDemo canvasDemo;
     private Button mBtnCanvas;
     private EditText mEtQty;
     private int miInput;
@@ -34,30 +36,30 @@ public class CanvasActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canvas);
-//        mEtQty = findViewById(R.id.et_qty);
-//        canvasDemo = findViewById(R.id.cv_drawing);
-//        mBtnCanvas = findViewById(R.id.btn_canvas);
+        mEtQty = findViewById(R.id.et_qty);
+        canvasDemo = findViewById(R.id.cv_drawing);
+        mBtnCanvas = findViewById(R.id.btn_canvas);
 //
 //
 //        iv = (ImageView) findViewById(R.id.imageView);
 //        SGD = new ScaleGestureDetector(this, new ScaleListener());
-//        mBtnCanvas.setOnClickListener(this);
+        mBtnCanvas.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-//        if (view == mBtnCanvas) {
-//            if (!mEtQty.getText().toString().isEmpty()) {
-//                miInput = Integer.parseInt(mEtQty.getText().toString());
-//                canvasDemo.QtyInput(miInput);
-//                canvasDemo.invalidate();
-//            }
-//            Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show();
-//        }
+        if (view == mBtnCanvas) {
+            if (!mEtQty.getText().toString().isEmpty()) {
+                miInput = Integer.parseInt(mEtQty.getText().toString());
+                canvasDemo.QtyInput(miInput);
+                canvasDemo.invalidate();
+            }
+            Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public boolean onTouchEvent(MotionEvent ev) {
-        SGD.onTouchEvent(ev);
+//        SGD.onTouchEvent(ev);
 
         mfXPosition = ev.getX();
         mfYPosition = ev.getY();

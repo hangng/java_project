@@ -17,7 +17,7 @@ import com.example.n3333.myapplication.module.Movies;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoviesApp extends AppCompatActivity {
+public class MoviesApp extends AppCompatActivity implements MoviesAdapter.Listener {
 
     private List<Movies> movieList = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -33,8 +33,8 @@ public class MoviesApp extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         SnapHelper startSnapHelper = new LinearSnapHelper();
-        mAdapter = new MoviesAdapter(movieList);
-        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mAdapter = new MoviesAdapter(movieList,this);
+        linearLayoutManager = new LinearLayoutManager(this);
 
 //        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -107,5 +107,10 @@ public class MoviesApp extends AppCompatActivity {
         movieList.add(movie);
 
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(int iPosition) {
+
     }
 }

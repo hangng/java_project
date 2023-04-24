@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,23 +18,12 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {
     private List<Movies> moviesList;
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, year, genre;
-        private ImageView ivRv;
-
-        public MyViewHolder(View view) {
-            super(view);
-            title = view.findViewById(R.id.title);
-            genre = view.findViewById(R.id.genre);
-            year = view.findViewById(R.id.year);
-            ivRv = view.findViewById(R.id.iv_rv);
-        }
-    }
+    private Listener mCallback;
 
 
-    public MoviesAdapter(List<Movies> moviesList) {
+    public MoviesAdapter(List<Movies> moviesList, Listener callback) {
         this.moviesList = moviesList;
+        this.mCallback = callback;
     }
 
     @Override
@@ -50,6 +40,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
         holder.title.setText(movie.getTitle());
         holder.genre.setText(movie.getGenre());
         holder.year.setText(movie.getYear());
+        holder.mRlRow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 //        holder.ivRv.setVisibility(View.GONE);
     }
 
@@ -57,4 +53,28 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
     public int getItemCount() {
         return moviesList.size();
     }
+
+    public interface Listener{
+
+        void onClick(int iPosition);
+    }
+
+
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView title, year, genre;
+
+        private RelativeLayout mRlRow;
+        private ImageView ivRv;
+
+        public MyViewHolder(View view) {
+            super(view);
+            title = view.findViewById(R.id.title);
+            genre = view.findViewById(R.id.genre);
+            year = view.findViewById(R.id.year);
+            ivRv = view.findViewById(R.id.iv_rv);
+            mRlRow = view.findViewById(R.id.rl_row);
+        }
+    }
+
 }

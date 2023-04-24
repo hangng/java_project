@@ -20,15 +20,15 @@
         android:layout_margin="20dp"
         android:text="testing" />
 
-<!--    <com.example.n3333.myapplication.component.CanvasDemo-->
-<!--        android:id="@+id/cv_drawing"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="300dp"-->
-<!--        android:visibility="gone"/>-->
+    <com.example.n3333.myapplication.component.CanvasDemo
+        android:id="@+id/cv_drawing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:id="@+id/imageView"
         android:src="@drawable/droid"
         android:scaleType="matrix"

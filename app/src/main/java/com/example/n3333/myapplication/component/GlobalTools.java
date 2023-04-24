@@ -5,16 +5,26 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
@@ -27,7 +37,9 @@ import androidx.core.content.FileProvider;
 
 import com.example.n3333.myapplication.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -36,6 +48,7 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class GlobalTools {
 
@@ -418,5 +431,125 @@ public class GlobalTools {
                 .setCancelable(false)
                 .show();
 
+    }
+
+
+    public static Bitmap rotate(Bitmap bitmap, int degree) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        Matrix mtx = new Matrix();
+        mtx.postRotate(degree);
+//        mtx.setRotate(degree);
+
+        return Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, true);
+    }
+
+    public static void drawWatermark(Bitmap bitmap, Context context) {
+        int iSize = 18;
+        int iTextSize = convertDpToPixel(context, iSize);
+        int iPadding = convertDpToPixel(context, 10);
+        String sWatermark = "For Personal use only";
+        Canvas canvas = new Canvas(bitmap);
+
+        Paint paint = new Paint();
+        Rect mrcTemp = new Rect();
+        Rect mrcBackGround = new Rect();
+        paint.setTextSize(iTextSize); // Text Size
+        paint.getTextBounds(sWatermark, 0, sWatermark.length(), mrcTemp);
+
+        while(mrcTemp.width() > bitmap.getWidth() && iSize > 0 ) {
+            iSize--;
+            iTextSize = convertDpToPixel(context, iSize);
+            paint.setTextSize(iTextSize); // Text
+            paint.getTextBounds(sWatermark, 0, sWatermark.length(), mrcTemp);
+        }
+
+        paint.setColor(Color.argb(70,0,0,0));
+
+        mrcBackGround.set(0,
+                bitmap.getHeight() - mrcTemp.height() - iPadding - iPadding,
+                bitmap.getWidth(),
+                bitmap.getHeight() - iPadding);
+        canvas.drawRect(mrcBackGround,paint);
+
+
+        paint.setColor(Color.argb(70,255,255,255)); // Text Color
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)); // Text Overlapping Pattern
+        // some more settings...
+
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+
+        int iX = bitmap.getWidth()/2 - mrcTemp.width()/2;
+        canvas.drawText(sWatermark, iX, bitmap.getHeight() - mrcTemp.height(), paint);
+    }
+
+    public static int convertDpToPixel(Context context, int idp) {
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) idp, context.getResources().getDisplayMetrics()));
+    }
+
+
+    public static boolean isImageFile(Uri selectedMediaUri,Context context) {
+
+        String sMimeType = Objects.requireNonNull(context.getContentResolver().getType(selectedMediaUri)).split("/")[0];
+        if (sMimeType.toLowerCase().equals("image")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static String fileToString(File file) {
+        String sFileString = null;
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            for (int readNum; (readNum = fis.read(buf)) != -1; ) {
+                baos.write(buf, 0, readNum); //no doubt here is 0
+            }
+            byte[] bytes = baos.toByteArray();
+            sFileString = Base64.encodeToString(bytes, Base64.DEFAULT);
+        } catch (Exception e) {
+            Log.i("TAG","fileToString Exception e " + e);
+        }
+        return sFileString;
+    }
+
+    public static String getFileName(Uri uri, Activity activity) {
+        try {
+            String result = null;
+            if (uri.getScheme().equals("content")) {
+                Cursor cursor = activity.getContentResolver().query(uri, null, null, null, null);
+                try {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+            if (result == null) {
+                result = uri.getPath();
+                int cut = result.lastIndexOf('/');
+                if (cut != -1) {
+                    result = result.substring(cut + 1);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            Log.i("TAG","getFileName Exception e " + e);
+            return "";
+        }
+    }
+
+    public static String BitMapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String sPicture = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return sPicture;
     }
 }
