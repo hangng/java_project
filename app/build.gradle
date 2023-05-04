@@ -22,7 +22,7 @@ android {
 
 //    fb step 1
     repositories {
-        mavenCentral()
+//        mavenCentral()
     }
 
     dataBinding {
