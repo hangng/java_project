@@ -2,9 +2,12 @@ package com.example.n3333.myapplication.component;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.example.n3333.myapplication.R;
@@ -552,4 +556,17 @@ public class GlobalTools {
 
         return sPicture;
     }
+
+//    public  static BluetoothAdapter initializeBluetooth(Context context){
+//        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+//
+//        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+//
+//        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled() || !getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+//            // Bluetooth is not supported on this device or not enabled
+//
+//            return
+//        }
+//
+//    }
 }

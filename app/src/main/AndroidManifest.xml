@@ -3,26 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.n3333.myapplication">
 
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
 
-
-
     <application
-        android:name="com.example.n3333.myapplication.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".BluetoothActivity"
+            android:exported="false" />
         <activity android:name=".DetectInstalledApp" />
         <activity android:name=".SurfaceViewActivity" />
         <activity android:name=".FirebaseTextML" />
@@ -31,9 +34,7 @@
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="label" /> <!-- To use multiple models: android:value="label,model2,model3" -->
         <activity android:name=".SortingRecyclerview" />
-        <activity android:name=".NotificationTest" />
-
-<!-- Camera Provider-->
+        <activity android:name=".NotificationTest" /> <!-- Camera Provider -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.n3333.myapplication.provider"
@@ -43,8 +44,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
-
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider355732528433221"

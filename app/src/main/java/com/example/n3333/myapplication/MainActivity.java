@@ -1,8 +1,11 @@
 package com.example.n3333.myapplication;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnRecyclerV, btnAsyncTask, btnUploadImag, btnExpand, btnFragment, btnDialog, btnTime,
             btnCalendar, btnRvFrag, btnTabTarget, mFAB, btnSubstring, btnNavigationMenu, btnCanvas, btnTouch, btnLm,
             btnFb, btnDb, btnNotify, btnSortingRv, btnFirebase, btnSurfaceView, btnBookLoading, btnDetectInstalledApp,
-            btnClientList;
+            btnClientList, btnBluetooth, btnSQLLite;
     Context context;
     private static long mlLastClickTime;
     private static int miLastClickViewId;
@@ -56,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSurfaceView = findViewById(R.id.btn_surfaceview);
         btnBookLoading = findViewById(R.id.btn_bookloading);
         btnDetectInstalledApp = findViewById(R.id.btn_detectinstalledapp);
+        btnBluetooth = findViewById(R.id.btn_bluetooth);
+        btnSQLLite = findViewById(R.id.btn_sql);
 
         btnRecyclerV.setOnClickListener(this);
         btnAsyncTask.setOnClickListener(this);
@@ -81,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSurfaceView.setOnClickListener(this);
         btnBookLoading.setOnClickListener(this);
         btnDetectInstalledApp.setOnClickListener(this);
+        btnBluetooth.setOnClickListener(this);
+        btnSQLLite.setOnClickListener(this);
 
         context = getApplicationContext();
         // Get the installed apps package name list
@@ -97,6 +104,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            Toast.makeText(this, "first time", Toast.LENGTH_SHORT).show();
 //
 //        }
+
+
+
     }
 
     @Override
@@ -217,6 +227,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (btnDetectInstalledApp == v) {
             Intent bl = new Intent(MainActivity.this, DetectInstalledApp.class);
             startActivity(bl);
+        }else if (btnBluetooth == v) {
+            Intent bl = new Intent(MainActivity.this, BluetoothActivity.class);
+            startActivity(bl);
+        }else if (btnSQLLite == v) {
+            MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("name", "John");
+            values.put("age", 30);
+            long newRowId = db.insert("users", null, values);
+
+            if (newRowId == -1) {
+                // Error occurred while inserting data
+                Log.i("TAG", "checking Error occurred while inserting data");
+            } else {
+                // Data inserted successfully
+                Log.i("TAG", "checking Data inserted successfully");
+
+                String[] projection = {"name", "age"};
+                Cursor cursor = db.query("users", projection, null, null, null, null, null);
+
+                if (cursor != null && cursor.moveToFirst()) {
+                    // Data retrieved successfully
+                    do {
+                        String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                        int age = cursor.getInt(cursor.getColumnIndexOrThrow("age"));
+                        // Do something with the data
+                    } while (cursor.moveToNext());
+                } else {
+                    // Error occurred while retrieving data
+                }
+
+            }
         }
     }
 

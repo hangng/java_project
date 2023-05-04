@@ -1,6 +1,7 @@
 package com.example.n3333.myapplication;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,6 +55,8 @@ public class MoviesApp extends AppCompatActivity implements MoviesAdapter.Listen
             }
             break;
         }
+
+        Log.i("TAG","checking onCreate");
 
     }
 
@@ -113,4 +116,6 @@ public class MoviesApp extends AppCompatActivity implements MoviesAdapter.Listen
     public void onClick(int iPosition) {
 
     }
+
+
 }
