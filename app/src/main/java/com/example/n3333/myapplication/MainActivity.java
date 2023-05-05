@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.n3333.myapplication.Dialogs.DialogActivity;
 import com.example.n3333.myapplication.TapTarget.TapTargetActivity;
 import com.example.n3333.myapplication.TimeTutorial.TimeActivity;
+import com.example.n3333.myapplication.datahelper.MyDatabaseHelper;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -231,36 +231,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent bl = new Intent(MainActivity.this, BluetoothActivity.class);
             startActivity(bl);
         }else if (btnSQLLite == v) {
-            MyDatabaseHelper dbHelper = new MyDatabaseHelper(context);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-            ContentValues values = new ContentValues();
-            values.put("name", "John");
-            values.put("age", 30);
-            long newRowId = db.insert("users", null, values);
-
-            if (newRowId == -1) {
-                // Error occurred while inserting data
-                Log.i("TAG", "checking Error occurred while inserting data");
-            } else {
-                // Data inserted successfully
-                Log.i("TAG", "checking Data inserted successfully");
-
-                String[] projection = {"name", "age"};
-                Cursor cursor = db.query("users", projection, null, null, null, null, null);
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    // Data retrieved successfully
-                    do {
-                        String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-                        int age = cursor.getInt(cursor.getColumnIndexOrThrow("age"));
-                        // Do something with the data
-                    } while (cursor.moveToNext());
-                } else {
-                    // Error occurred while retrieving data
-                }
-
-            }
+            Intent bl = new Intent(MainActivity.this, SQLLite.class);
+            startActivity(bl);
         }
     }
 

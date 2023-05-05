@@ -24,6 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".SQLLite"
+            android:exported="false" />
+        <activity
             android:name=".BluetoothActivity"
             android:exported="false" />
         <activity android:name=".DetectInstalledApp" />
