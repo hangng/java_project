@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.n3333.practice">
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <application
+        android:name="com.example.n3333.practice.App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="com.example.n3333.practice.GPSLocationActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.n3333.practice.SQLLite"
+            android:exported="false" />
+        <activity
+            android:name="com.example.n3333.practice.BluetoothActivity"
+            android:exported="false" />
+        <activity android:name="com.example.n3333.practice.DetectInstalledApp" />
+        <activity android:name="com.example.n3333.practice.SurfaceViewActivity" />
+        <activity android:name="com.example.n3333.practice.FirebaseTextML" />
+
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="label" /> <!-- To use multiple models: android:value="label,model2,model3" -->
+        <activity android:name="com.example.n3333.practice.SortingRecyclerview" />
+        <activity android:name="com.example.n3333.practice.NotificationTest" /> <!-- Camera Provider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.n3333.practice.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider355732528433221"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
+        <activity android:name="com.example.n3333.practice.DataBindingActivity" /> <!-- fb step 5 -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" /> <!-- fb codeless step 2 -->
+        <activity
+            android:name="com.example.n3333.practice.FacebookDevelopment"
+            android:label="Facebook">
+            <tools:validation testUrl="http://testing.com.my/test" />
+        </activity>
+        <activity android:name="com.example.n3333.practice.LoadMoreDataToRVL" />
+        <activity android:name="com.example.n3333.practice.TouchEvent" />
+        <activity android:name="com.example.n3333.practice.CanvasActivity" />
+        <activity android:name="com.example.n3333.practice.BottomNavigation">
+            <tools:validation testUrl="http://rv.com.my/test" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="rv.com.my"
+                    android:pathPrefix="/test"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.example.n3333.practice.VolleyHandling" />
+        <activity
+            android:name="com.example.n3333.practice.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category." />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- <provider -->
+        <!-- android:name="android.support.v4.content.FileProvider" -->
+        <!-- android:authorities="com.example.myapplication" -->
+        <!-- android:grantUriPermissions="true"> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.support.FILE_PROVIDER_PATHS" -->
+        <!-- android:resource="@xml/filepaths" /> -->
+        <!-- </provider> -->
+        <activity android:name="com.example.n3333.practice.MoviesApp" />
+        <activity android:name="com.example.n3333.practice.UploadImageActivity" />
+        <activity android:name="com.example.n3333.practice.FragmentActivity" />
+        <activity android:name="com.example.n3333.practice.ExpendableActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="testing.com.my"
+                    android:pathPattern="/test"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.example.n3333.practice.ProfilePractice" />
+        <activity android:name="com.example.n3333.practice.BookLoadingTutorial" />
+        <activity android:name="com.example.n3333.practice.AsyncTaskActivity" />
+        <activity android:name="com.example.n3333.practice.Dialogs.DialogActivity" />
+        <activity android:name="com.example.n3333.practice.TimeTutorial.TimeActivity" />
+        <activity android:name="com.example.n3333.practice.CalendarActivity" />
+        <activity android:name="com.example.n3333.practice.FragmentRecyclerView" />
+        <activity android:name="com.example.n3333.practice.SwipeRecyclerView" />
+        <activity android:name="com.example.n3333.practice.TapTarget.TapTargetActivity" />
+        <activity
+            android:name="com.example.n3333.practice.FloatingActivity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme.NoActionBar" />
+    </application>
+
+</manifest>

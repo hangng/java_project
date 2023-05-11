@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 31
+    defaultConfig {
+        applicationId "com.example.n3333.myapplication"
+//        changed to 24 due to simpledateformat
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+//    fb step 1
+    repositories {
+//        mavenCentral()
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision:18.0.1'
+    implementation 'com.google.firebase:firebase-auth:21.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+//    implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'
+    implementation 'com.victor:lib:1.0.4'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
+
+    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
+
+    //    fb step 2
+//    implementation 'com.facebook.android:facebook-android-sdk:4.33.0'
+    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+//    implementation 'com.facebook.android:facebook-share:[5,6)'
+    implementation 'com.google.android.gms:play-services-maps:8.4.0'
+
+    implementation 'com.google.firebase:firebase-ml-vision:19.0.3'
+    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
+    implementation 'com.android.volley:volley:1.2.1'
+
+}
